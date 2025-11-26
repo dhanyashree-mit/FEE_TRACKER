@@ -1,12 +1,11 @@
 # DanceFlow - Studio Management System 💃
 
-A Serverless Single Page Application (SPA) designed to help dance studios manage student enrollments and monthly fee payments efficiently.
-[![Live Demo](https://img.shields.io/badge/demo-online-green.svg)](https://github.com/dhanyashree-mit/FEE_TRACKER)
+
 
 A Serverless Single Page Application (SPA) designed to help dance studios manage student enrollments, track monthly fees, and approve payments efficiently.
 
 ## 🔗 Live Demo
-👉 **[Click here to view the Live Website](https://github.com/dhanyashree-mit/FEE_TRACKER)**
+👉 **[Click here to view the Live Website](https://dhanyashree-mit.github.io/FEE_TRACKER/)**
 
 ## 🚀 Features
 * **Role-Based Access:** Secure Login for Admins (Teachers) and Students.
