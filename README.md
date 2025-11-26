@@ -24,4 +24,4 @@ A Serverless Single Page Application (SPA) designed to help dance studios manage
 * **Backend:** Firebase (Firestore & Authentication)
 * **Deployment:** GitHub Pages
 
-## 📸 Screenshots
+
