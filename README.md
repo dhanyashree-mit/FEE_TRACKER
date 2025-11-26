@@ -7,6 +7,11 @@ A Serverless Single Page Application (SPA) designed to help dance studios manage
 ## 🔗 Live Demo
 👉 **[Click here to view the Live Website](https://dhanyashree-mit.github.io/FEE_TRACKER/)**
 
+> **Admin Credentials for Testing:**
+> * Email: `admin@gmail.com` 
+> * Password: `admin123`
+> * *Note: Please do not delete data.*
+
 ## 🚀 Features
 * **Role-Based Access:** Secure Login for Admins (Teachers) and Students.
 * **Invite-Only System:** Students can only register if their email is pre-authorized.
