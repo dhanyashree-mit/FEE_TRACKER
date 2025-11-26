@@ -5,7 +5,7 @@
 A Serverless Single Page Application (SPA) designed to help dance studios manage student enrollments, track monthly fees, and approve payments efficiently.
 
 ## 🔗 Live Demo
-👉 **[Click here to view the Live Website](https://dhanyashree-mit.github.io/FEE_TRACKER/)**
+👉 **[Click here to view the Live Website]**
 
 > **Admin Credentials for Testing:**
 > * Email: `admin@gmail.com` 
