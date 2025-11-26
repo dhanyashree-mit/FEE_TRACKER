@@ -65,4 +65,71 @@ th { color: var(--primary); }
 
 /* UTILS */
 .hidden { display: none !important; }
+
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 100; }
+
+
+/* ========================================= */
+/* RESPONSIVE DESIGN (MOBILE OPTIMIZATION)   */
+/* ========================================= */
+
+@media (max-width: 768px) {
+    /* 1. Stack the layout vertically */
+    .dashboard {
+        flex-direction: column;
+    }
+
+    /* 2. Turn Sidebar into a Top Navigation Bar */
+    .sidebar {
+        width: 100%;
+        padding: 15px;
+        flex-direction: row; /* Items side-by-side */
+        justify-content: space-between;
+        align-items: center;
+        overflow-x: auto; /* Allow scrolling if menu is long */
+        white-space: nowrap;
+    }
+
+    .brand {
+        margin-bottom: 0;
+        font-size: 1.2rem;
+        margin-right: 20px;
+    }
+
+    .nav-item {
+        margin-bottom: 0;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    .logout-btn {
+        margin-top: 0;
+        margin-left: 15px;
+        padding: 8px 15px;
+    }
+
+    /* 3. Adjust Main Content */
+    .main-content {
+        padding: 15px;
+    }
+
+    /* 4. Fix Tables (Add horizontal scroll on small screens) */
+    .card {
+        overflow-x: auto;
+    }
+    
+    table {
+        min-width: 500px; /* Ensures table doesn't get too squished */
+    }
+
+    /* 5. Stack the Stats Grid (1 Card per row) */
+    .stats-grid {
+        grid-template-columns: 1fr; 
+    }
+    
+    /* 6. Fix Modal Width */
+    .modal .card {
+        width: 90%; /* Fit to mobile screen width */
+        max-height: 85vh;
+    }
+}
