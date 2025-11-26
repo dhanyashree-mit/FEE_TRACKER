@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dance Class Fee Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="loader" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:999; align-items:center; justify-content:center;">
+        <div style="color:var(--primary); font-size:2rem;"><i class="fas fa-spinner fa-spin"></i></div>
+    </div>
+
+    <div id="auth-container">
+        <div class="auth-card">
+            <h2><i class="fas fa-music"></i> Dance Manager</h2>
+            <div id="login-form">
+                <input type="email" id="email" placeholder="Email Address">
+                <input type="password" id="password" placeholder="Password">
+                <div style="text-align: right; margin-bottom: 10px;">
+                    <a href="#" onclick="toggleForgotPassword()" style="font-size: 0.85rem; color:var(--primary);">Forgot Password?</a>
+                </div>
+                <button onclick="handleLogin()" class="btn-primary">Login</button>
+                <p style="margin-top:10px; font-size:0.9rem;">
+                    No account? Students ask admin. Admin <a href="#" onclick="toggleSignup()">Sign up here</a>.
+                </p>
+            </div>
+            <div id="forgot-password-form" class="hidden">
+                <h3 style="margin-bottom:10px; color:var(--primary);">Reset Password</h3>
+                <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Enter your registered email.</p>
+                <input type="email" id="reset-email" placeholder="Enter your Email">
+                <button onclick="handleResetPassword()" class="btn-primary">Send Reset Link</button>
+                <p style="margin-top:15px; font-size:0.9rem;"><a href="#" onclick="toggleForgotPassword()">Back to Login</a></p>
+            </div>
+            <div id="signup-form" class="hidden">
+                <h3 style="margin-bottom:15px; color:var(--primary);">Create Account</h3>
+                <p id="student-hint" style="font-size:0.8rem; color:#666; margin-bottom:10px;">Students: Use the email your teacher added.</p>
+                <input type="text" id="new-name" placeholder="Full Name (Admins Only)" style="display:none;">
+                <input type="email" id="new-email" placeholder="Email Address">
+                <input type="password" id="new-password" placeholder="Create Password">
+                <div style="margin: 15px 0; text-align: left; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="is-admin-check" style="width: auto;" onchange="toggleAdminFields()">
+                    <label for="is-admin-check" style="font-size: 0.9rem; color: var(--primary); font-weight: bold;">I am a Teacher</label>
+                </div>
+                <div id="admin-secret-box" class="hidden">
+                    <input type="password" id="admin-secret-key" placeholder="Enter Secret Code (TEACHER2025)">
+                </div>
+                <button onclick="handleSignup()">Register Account</button>
+                <p style="margin-top:10px; font-size:0.9rem;"><a href="#" onclick="toggleSignup()">Back to Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-dashboard" class="dashboard hidden">
+        <div class="sidebar">
+            <div class="brand"><i class="fas fa-dancer"></i> DanceAdmin</div>
+            <div class="nav-item active" onclick="showSection('admin-overview', this)"><i class="fas fa-chart-pie"></i> Dashboard</div>
+            <div class="nav-item" onclick="showSection('admin-students', this)"><i class="fas fa-users"></i> Students</div>
+            <div class="nav-item" onclick="showSection('admin-approvals', this)"><i class="fas fa-check-circle"></i> Approvals</div>
+            <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+        
+        <div class="main-content">
+            <div id="admin-overview" class="section">
+                <div class="header">
+                    <h2 id="dashboard-month-title">Dashboard</h2>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <select id="dashboard-year-select" onchange="loadDashboardStats()" style="padding: 5px 10px; border:1px solid #ddd; border-radius:4px;">
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                        </select>
+                        <select id="dashboard-month-select" onchange="loadDashboardStats()" style="padding: 5px 10px; border:1px solid #ddd; border-radius:4px;">
+                            <option value="all">Entire Year</option>
+                            <option value="January">January</option>
+                            <option value="February">February</option>
+                            <option value="March">March</option>
+                            <option value="April">April</option>
+                            <option value="May">May</option>
+                            <option value="June">June</option>
+                            <option value="July">July</option>
+                            <option value="August">August</option>
+                            <option value="September">September</option>
+                            <option value="October">October</option>
+                            <option value="November">November</option>
+                            <option value="December">December</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="card clickable-card" style="border-left: 5px solid var(--success);" onclick="openStatDetails('paid')">
+                        <h3><i class="fas fa-rupee-sign"></i> Revenue</h3>
+                        <div class="number" id="dash-revenue">0</div>
+                        <small style="color:#666; font-size:0.8rem;">Click to view paid</small>
+                    </div>
+                    <div class="card clickable-card" style="border-left: 5px solid var(--primary);" onclick="openStatDetails('total')">
+                        <h3><i class="fas fa-users"></i> Total Students</h3>
+                        <div class="number" id="dash-total-students">0</div>
+                        <small style="color:#666; font-size:0.8rem;">Click to view all</small>
+                    </div>
+                    <div class="card clickable-card" style="border-left: 5px solid var(--pending);" onclick="openStatDetails('pending')">
+                        <h3><i class="fas fa-clock"></i> Pending</h3>
+                        <div class="number" id="dash-pending">0</div>
+                        <small style="color:#666; font-size:0.8rem;">Click to view requests</small>
+                    </div>
+                    <div class="card clickable-card" style="border-left: 5px solid var(--warning);" onclick="openStatDetails('unpaid')">
+                        <h3><i class="fas fa-exclamation-circle"></i> Unpaid</h3>
+                        <div class="number" id="dash-unpaid">0</div>
+                        <small style="color:#666; font-size:0.8rem;">Click to view unpaid</small>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h3>Recent Activity</h3>
+                    <table>
+                        <thead><tr><th>Student</th><th>Month</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+                        <tbody id="dash-recent-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-students" class="section hidden">
+                <div class="header">
+                    <h2>Student Management</h2>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="openModal('change-code-modal')" style="width:auto; padding: 10px 20px; background:var(--primary);"><i class="fas fa-key"></i> Code</button>
+                        <button onclick="openModal('fee-settings-modal')" style="width:auto; padding: 10px 20px; background:var(--warning);"><i class="fas fa-cog"></i> Fees</button>
+                        <button onclick="openModal('add-student-modal')" style="width:auto; padding: 10px 20px;">+ Add Student</button>
+                    </div>
+                </div>
+                <div class="card" style="background: transparent; box-shadow: none; padding: 0;">
+                    <div style="margin-bottom: 15px; display:flex; gap:10px; background: white; padding: 15px; border-radius: 8px; box-shadow: var(--shadow);">
+                        <input type="text" id="search-input" placeholder="Search students..." onkeyup="renderStudentList()">
+                        <select id="filter-category" onchange="renderStudentList()">
+                            <option value="all">All Categories</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div id="student-grid-container" class="student-grid"></div>
+                </div>
+            </div> 
+
+            <div id="admin-approvals" class="section hidden">
+                <h2>Payment Approvals</h2>
+                <div class="card" style="margin-bottom: 20px; border-left: 5px solid var(--pending);">
+                    <h3 style="color:var(--pending);">Pending Requests</h3>
+                    <table>
+                        <thead><tr><th>Student</th><th>Month</th><th>Amount</th><th>Student Note</th><th>Date</th><th>Proof</th><th>Admin Reply</th><th>Action</th></tr></thead>
+                        <tbody id="approvals-table-body"></tbody>
+                    </table>
+                </div>
+                <div class="card" style="border-left: 5px solid var(--success);">
+                    <h3 style="color:var(--success);">Approved History</h3>
+                    <table>
+                        <thead><tr><th>Student</th><th>Month</th><th>Amount</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody id="approved-history-table"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="student-dashboard" class="dashboard hidden">
+        <div class="sidebar">
+            <div class="brand"><i class="fas fa-user"></i> My Portal</div>
+            <div class="nav-item active"><i class="fas fa-wallet"></i> My Fees</div>
+            <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h2 id="student-welcome">Welcome!</h2>
+            </div>
+
+            <div class="stats-grid">
+                <div class="card">
+                    <h3 id="status-month-label">Current Status</h3>
+                    <div id="my-status" class="badge badge-unpaid" style="display:inline-block; font-size: 1.2rem;">Unpaid</div>
+                </div>
+                <div class="card">
+                    <h3>Standard Monthly Fee</h3>
+                    <div class="number" id="student-fee-display">₹0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Upload Payment Proof</h3>
+                <div style="display:flex; flex-direction: column; gap:10px;">
+                    <label style="font-size:0.9rem; color:#666;">Select Month:</label>
+                    <select id="payment-month">
+                        <option value="January">January</option>
+                        <option value="February">February</option>
+                        <option value="March">March</option>
+                        <option value="April">April</option>
+                        <option value="May">May</option>
+                        <option value="June">June</option>
+                        <option value="July">July</option>
+                        <option value="August">August</option>
+                        <option value="September">September</option>
+                        <option value="October">October</option>
+                        <option value="November">November</option>
+                        <option value="December">December</option>
+                    </select>
+
+                    <label style="font-size:0.9rem; color:#666;">Amount Paid (₹):</label>
+                    <input type="number" id="custom-amount" placeholder="Enter Amount">
+
+                    <label style="font-size:0.9rem; color:#666;">Your Note (Optional):</label>
+                    <input type="text" id="payment-note" placeholder="e.g. GPay Transaction ID 12345">
+
+                    <div style="display:flex; gap:10px; align-items:center; margin-top:5px;">
+                        <input type="file" id="payment-file">
+                        <button onclick="uploadPayment()" style="width:auto;">Submit Payment</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
+                <h3>Payment History</h3>
+                <table>
+                    <thead><tr><th>Month</th><th>Date</th><th>Amount</th><th>My Note</th><th>Status</th><th>Admin Reply</th></tr></thead>
+                    <tbody id="my-history-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-student-modal" class="modal hidden">
+        <div class="card" style="width:400px;">
+            <h3>Add New Student</h3>
+            <input type="text" id="st-name" placeholder="Full Name">
+            <input type="email" id="st-email" placeholder="Email (for login)">
+            <input type="text" id="st-phone" placeholder="Phone Number">
+            <select id="st-category">
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+            </select>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-primary" onclick="addStudent()">Save</button>
+                <button onclick="closeModal('add-student-modal')" style="background:#ccc;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="change-code-modal" class="modal hidden">
+        <div class="card" style="width:400px;">
+            <h3>Update Teacher Code</h3>
+            <input type="text" id="new-secret-code" placeholder="Enter New Secret Code">
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="btn-primary" onclick="saveSecretCode()">Save Code</button>
+                <button onclick="closeModal('change-code-modal')" style="background:#ccc;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fee-settings-modal" class="modal hidden">
+        <div class="card" style="width:400px;">
+            <h3>Set Category Fees</h3>
+            <label>Beginner Fee (₹):</label><input type="number" id="fee-beginner" placeholder="e.g. 500">
+            <label>Intermediate Fee (₹):</label><input type="number" id="fee-intermediate" placeholder="e.g. 700">
+            <label>Advanced Fee (₹):</label><input type="number" id="fee-advanced" placeholder="e.g. 900">
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="btn-primary" onclick="saveFeeSettings()">Update Fees</button>
+                <button onclick="closeModal('fee-settings-modal')" style="background:#ccc;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="proof-modal" class="modal hidden" style="z-index: 200;">
+        <div class="card" style="position: relative; width: auto; max-width: 90%; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; align-items: center;">
+            <button onclick="closeModal('proof-modal')" style="position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%; background: #ff4444; color: white; display: flex; justify-content: center; align-items: center; padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"><i class="fas fa-times"></i></button>
+            <h3 style="margin-bottom: 15px; width: 100%; text-align: left;">Payment Screenshot</h3>
+            <img id="proof-image-display" src="" alt="Proof" style="max-width: 100%; max-height: 70vh; object-fit: contain; border: 1px solid #ddd; border-radius: 4px;">
+            <button onclick="closeModal('proof-modal')" style="margin-top: 15px; width: auto; background: #666;">Close Viewer</button>
+        </div>
+    </div>
+
+    <div id="stats-detail-modal" class="modal hidden" style="z-index: 200;">
+        <div class="card" style="width: 500px; max-height: 80vh; display: flex; flex-direction: column;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
+                <h3 id="stats-modal-title" style="margin:0; font-size:1.2rem; color:var(--primary);">List</h3>
+                <button onclick="closeModal('stats-detail-modal')" style="background:none; color:#666; width:auto; font-size:1.2rem; padding:0; margin:0;"><i class="fas fa-times"></i></button>
+            </div>
+            <ul id="stats-list-ul"></ul>
+            <button onclick="closeModal('stats-detail-modal')" style="margin-top:15px; background:#ddd; color:#333;">Close</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
